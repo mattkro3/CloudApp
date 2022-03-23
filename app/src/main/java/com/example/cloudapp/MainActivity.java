@@ -16,6 +16,7 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.amazonaws.http.HttpMethodName;
 import com.amazonaws.mobileconnectors.apigateway.ApiClientFactory;
@@ -24,6 +25,7 @@ import com.amazonaws.mobileconnectors.apigateway.ApiResponse;
 import com.amazonaws.util.IOUtils;
 import com.example.cloudapp.clientsdk.CreateTableAddRecordsAndReadAPIClient;
 import com.example.cloudapp.databinding.ActivityMainBinding;
+import com.google.firebase.messaging.FirebaseMessaging;
 import com.google.gson.JsonParser;
 
 import org.json.JSONObject;
@@ -43,11 +45,15 @@ public class MainActivity extends AppCompatActivity {
     private ApiClientFactory factory;
     private CreateTableAddRecordsAndReadAPIClient client;
     private TextView name2;
+    private EditText title, message;
     Button buttonNotify;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        FirebaseMessaging.getInstance().subscribeToTopic("all");
+
 
         buttonNotify = findViewById(R.id.Notify);
 
@@ -108,17 +114,27 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        title = findViewById(R.id.EmpID);
+        message = findViewById(R.id.Name);
+
         buttonNotify.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My notification");
-                builder.setContentTitle("Notification");
-                builder.setContentText("This is a notification");
-                builder.setSmallIcon(R.drawable.ic_launcher_background);
-                builder.setAutoCancel(true);
+                if(!title.getText().toString().isEmpty() && !message.getText().toString().isEmpty()) {
+                    FcmNotificationsSender notificationsSender = new FcmNotificationsSender("/topics/all", title.getText().toString(),
+                            message.getText().toString(), getApplicationContext(), MainActivity.this);
+                    notificationsSender.SendNotifications();
+                }else{
+                    Toast.makeText(MainActivity.this, "please give your data", Toast.LENGTH_LONG).show();
+                }
+                //NotificationCompat.Builder builder = new NotificationCompat.Builder(MainActivity.this, "My notification");
+                //builder.setContentTitle("Notification");
+                //builder.setContentText("This is a notification");
+                //builder.setSmallIcon(R.drawable.ic_launcher_background);
+                //builder.setAutoCancel(true);
 
-                NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
-                managerCompat.notify(1, builder.build());
+                //NotificationManagerCompat managerCompat = NotificationManagerCompat.from(MainActivity.this);
+                //managerCompat.notify(1, builder.build());
             }
         });
     }
