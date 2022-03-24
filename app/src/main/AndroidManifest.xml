@@ -4,7 +4,7 @@
     package="com.example.cloudapp">
 
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE"/>
+    <uses-permission android:name="android.permission.ACCESS_WIFI_STATE" />
     <uses-permission android:name="android.permission.VIBRATE" />
 
     <application
@@ -15,6 +15,12 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.CloudApp"
         android:usesCleartextTraffic="true">
+        <activity
+            android:name=".SamplePage"
+            android:exported="false" />
+        <activity
+            android:name=".SamplePagel"
+            android:exported="false" />
         <activity
             android:name=".Notification"
             android:exported="false" />
@@ -27,11 +33,12 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
+
         <service
             android:name=".FirebaseMessagingService"
+            android:exported="true"
             android:permission="TODO"
-            tools:ignore="ExportedService"
-            android:exported="true">
+            tools:ignore="ExportedService">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
             </intent-filter>
